@@ -1,0 +1,61 @@
+\documentclass[a4paper,twoside,11pt]{report} %openright
+\input{Setup/Statics.tex}
+\input{Setup/Preamble.tex}
+\input{Setup/Settings.tex}
+
+\begin{document}
+
+\pagenumbering{roman}
+\input{Frontmatter/Frontpage.tex}
+\pagecolor{white}
+\newgeometry{top=2.81cm, bottom=2.75cm, outer=2.5cm, inner=3.5cm}
+\pagestyle{empty}
+\cleardoublepage 
+\input{Frontmatter/Copyright.tex}
+\clearpage 
+\pagestyle{main}
+\input{Frontmatter/Approval.tex}
+\clearpage 
+\input{Frontmatter/Abstract.tex}
+\clearpage  
+\input{Frontmatter/Acknowledgements.tex}
+\cleardoublepage 
+\tableofcontents
+\cleardoublepage 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagenumbering{arabic}
+\graphicspath{{figures/}{Pictures/}} % Set graphics path for figures
+\input{Chapters/01_introduction.tex}
+\cleardoublepage
+\input{Chapters/02_literature_review.tex}
+\cleardoublepage
+\input{Chapters/03_problem_setting.tex}
+\cleardoublepage
+\input{Chapters/04_architecture_implementation.tex}
+\cleardoublepage
+\input{Chapters/05_policies_and_gates.tex}
+\cleardoublepage
+\input{Chapters/06_experimental_design_and_auditing.tex}
+\cleardoublepage
+\input{Chapters/07_results.tex}
+\cleardoublepage
+\input{Chapters/08_discussion_limitations.tex}
+\cleardoublepage
+\input{Chapters/09_learning_augmented_allocation.tex}
+\cleardoublepage
+\input{Chapters/10_conclusion.tex}
+\cleardoublepage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Temporarily include all entries from the loaded .bib files
+% so that the bibliography is non-empty even before citations are added.
+\nocite{*}
+\printbibliography[heading=bibintoc,title={Bibliography}]
+\cleardoublepage 
+\appendix
+\input{Backmatter/Appendix.tex}
+\cleartoleftpage
+\input{Backmatter/Backpage.tex}
+
+\end{document}

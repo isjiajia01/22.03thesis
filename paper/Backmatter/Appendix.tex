@@ -1,0 +1,40 @@
+\chapter{Appendix}
+\label{app:repro}
+
+\section{Reproducibility and Audit Index for Chapter 9}
+\label{app:ch9-audit}
+
+This appendix indexes the artifacts used by Chapter~\ref{ch:learning}. It is an index only; claims remain in the main text.
+
+\subsection*{Publication Bundle}
+Chapter-9 publication artifacts are stored in:
+\begin{itemize}
+    \item \texttt{data/audits/ch9/\_publication/}
+\end{itemize}
+
+Key files:
+\begin{itemize}
+    \item \texttt{paired\_results.csv}: Paired-by-seed statistics used for OOD\_hard / OOD\_pressure / ID comparisons.
+    \item \texttt{final\_decision.md}: Human-readable decision summary aligned with the paired table.
+    \item \texttt{audit\_index.json}: Audit counts, deduplication rule, and per-condition PASS/FAIL status.
+    \item \texttt{traffic\_light\_all.json}: Run-level PASS/FAIL ledger for traceability.
+    \item \texttt{publication\_summary.json}: Supplemental summary including mechanism diagnostics.
+    \item \texttt{mechanism\_action\_shift.csv}: Extracted quantitative mechanism evidence cited in Chapter 9.
+\end{itemize}
+
+\subsection*{Core Reproduction Commands}
+The following commands reproduce the Chapter-9 audit/publish flow used in this thesis snapshot:
+
+\begin{lstlisting}[language=bash,basicstyle=\small\ttfamily]
+python -m scripts.cli preflight
+python -m scripts.cli run-exp --exp EXP01 --seed 1 --dry-run
+python -m scripts.cli audit exp15c
+python -m scripts.cli publish exp13b
+\end{lstlisting}
+
+\subsection*{Delta and Statistical Convention}
+Unless explicitly noted otherwise, Chapter-9 paired comparisons use:
+\[
+\Delta = \text{candidate} - \text{baseline}
+\]
+For the feature-ablation claims, \texttt{candidate = no\_calendar} and \texttt{baseline = full}. Paired tests are two-sided t-tests with 95\% confidence intervals.
