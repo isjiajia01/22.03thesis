@@ -181,7 +181,13 @@ def run_exp14(variant: str, seeds: List[int], scenario_id: str = "crunch_d5_d10"
         run_dir = RESULTS_DIR / "EXP14" / variant / scenario_id / f"seed_{seed}_{git_hash}_{run_uuid}"
 
         print(f"  Seed {seed}...", end=" ")
-        metrics, daily_stats = run_single(config, seed, variant, run_dir, git_hash)
+        try:
+            metrics, daily_stats = run_single(config, seed, variant, run_dir, git_hash)
+        except Exception:
+            if run_dir.exists():
+                import shutil
+                shutil.rmtree(run_dir, ignore_errors=True)
+            raise
 
         failures = sum(d["failures"] for d in daily_stats)
         compute = sum(d["compute_limit_seconds"] for d in daily_stats)
@@ -208,6 +214,7 @@ def generate_hpc_scripts(variants: List[str], seeds: List[int], scenario_id: str
     for variant in variants:
         script_path = scripts_dir / f"run_{variant.lower()}_{scenario_id}.sh"
         script_content = f'''#!/bin/bash
+set -euo pipefail
 #BSUB -J {variant}_{scenario_id}[1-{len(seeds)}]
 #BSUB -q hpc
 #BSUB -W 4:00
@@ -220,14 +227,16 @@ def generate_hpc_scripts(variants: List[str], seeds: List[int], scenario_id: str
 # EXP14: {variant} - Sparse Fail-Safe Bandit
 # Scenario: {scenario_id}
 
-source /zhome/2a/1/202283/miniforge3/bin/activate base
+PROJECT_ROOT="{_PROJECT_ROOT}"
+PYTHON_BIN="${{PYTHON_BIN:-/usr/bin/python3}}"
+mkdir -p "${{PROJECT_ROOT}}/hpc_logs/exp14"
+cd "${{PROJECT_ROOT}}"
+export PYTHONPATH="${{PROJECT_ROOT}}:${{PROJECT_ROOT}}/code:${{PYTHONPATH:-}}"
+export VRP_MAX_TRIPS_PER_VEHICLE=2
 
 SEEDS=({' '.join(str(s) for s in seeds)})
 SEED=${{SEEDS[$LSB_JOBINDEX-1]}}
-
-cd "{_PROJECT_ROOT}"
-
-python "{_THIS_FILE}" --variant {variant} --seed $SEED --scenario {scenario_id}
+"${{PYTHON_BIN}}" "{_THIS_FILE}" --variant {variant} --seed "$SEED" --scenario {scenario_id}
 '''
         with open(script_path, 'w') as f:
             f.write(script_content)
